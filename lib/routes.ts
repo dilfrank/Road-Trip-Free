@@ -1,5 +1,41 @@
 export type BudgetPreference = "省钱" | "普通" | "舒适";
 
+export type RouteDay = {
+  day: number;
+  title: string;
+  driveHours: number;
+  drive: string;
+  stops: string[];
+  rest: string;
+  note: string;
+};
+
+export type MapPoint = {
+  label: string;
+  x: number;
+  y: number;
+};
+
+export type RouteCandidate = {
+  id: string;
+  name: string;
+  theme: string;
+  summary: string;
+  bestMonths: number[];
+  goodMonths: number[];
+  riskMonths?: number[];
+  warning?: string;
+  minDays: number;
+  maxDays: number;
+  maxDayDrive: number;
+  totalDriveHours: number;
+  budget: BudgetPreference;
+  experience: number;
+  highlights: string[];
+  itinerary: RouteDay[];
+  mapPoints: MapPoint[];
+};
+
 export type TripPreferences = {
   origin: string;
   month: number;
@@ -8,50 +44,19 @@ export type TripPreferences = {
   budget: BudgetPreference;
 };
 
-export type RouteDay = {
-  day: number;
-  title: string;
-  drive: string;
-  driveHours: number;
-  stops: string[];
-  rest: string;
+export type ScoreBreakdown = {
+  season: number;
+  driving: number;
+  duration: number;
+  budget: number;
+  experience: number;
 };
 
-export type RouteSuggestion = {
-  id: string;
-  name: string;
-  theme: string;
-  summary: string;
-  totalDrive: string;
-  seasonFit: string;
+export type RouteSuggestion = RouteCandidate & {
   score: number;
+  breakdown: ScoreBreakdown;
   reasons: string[];
-  warning?: string;
+  seasonFit: string;
+  totalDrive: string;
   days: RouteDay[];
-};
-
-export type RouteLeg = {
-  to: string;
-  hours: number;
-  stops: string[];
-  rest: string;
-};
-
-export type RouteCandidate = {
-  id: string;
-  name: string;
-  theme: string;
-  summary: string;
-  totalDriveHours: number;
-  bestMonths: number[];
-  goodMonths: number[];
-  cautionMonths?: number[];
-  cautionText?: string;
-  minDays: number;
-  maxDays: number;
-  costTier: 1 | 2 | 3;
-  experienceScore: number;
-  slowDayLocation: string;
-  slowDayStops: string[];
-  legs: RouteLeg[];
 };
