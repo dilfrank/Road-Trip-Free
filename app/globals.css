@@ -40,7 +40,7 @@ label { display: grid; gap: 8px; margin-bottom: 18px; font-size: 14px; font-weig
 input, select { width: 100%; border: 1px solid var(--line); background: white; border-radius: 12px; padding: 14px 14px; color: var(--ink); outline: none; }
 input:focus, select:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(217,255,97,.65); }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.planner button, .secondary { width: 100%; border: 1px solid var(--ink); background: var(--ink); color: white; border-radius: 12px; padding: 15px 18px; font-weight: 850; }
+.planner button { width: 100%; border: 1px solid var(--ink); background: var(--ink); color: white; border-radius: 12px; padding: 15px 18px; font-weight: 850; }
 .planner button:hover { background: var(--accent-dark); }
 .microcopy { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 12px 2px 0; }
 
@@ -55,13 +55,21 @@ input:focus, select:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba
 .section-heading h2 { font-size: clamp(34px, 4vw, 54px); letter-spacing: -.05em; margin: 10px 0 0; }
 .query-summary { color: var(--muted); max-width: 320px; text-align: right; }
 .empty-state { border: 1px dashed #9e9a8f; min-height: 220px; display: grid; place-items: center; padding: 32px; color: var(--muted); text-align: center; border-radius: 20px; }
+.engine-note { margin: -10px 0 26px; border-left: 3px solid var(--ink); padding: 2px 0 2px 14px; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .route-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
 .route-card { background: var(--card); border: 1px solid var(--ink); border-radius: 18px; padding: 22px; }
-.route-topline { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted); }
+.route-topline { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted); align-items: center; }
+.route-badges { display: flex; gap: 6px; align-items: center; }
 .route-topline strong { color: var(--ink); background: var(--accent); border-radius: 999px; padding: 5px 8px; }
+.score { color: var(--ink); border: 1px solid var(--ink); background: white; border-radius: 999px; padding: 4px 7px; font-weight: 900; }
 .route-card h3 { font-size: 27px; letter-spacing: -.04em; margin: 18px 0 10px; }
 .route-summary { min-height: 70px; color: var(--muted); line-height: 1.55; font-size: 14px; }
-.stats { display: flex; gap: 7px; flex-wrap: wrap; margin: 18px 0 24px; }
+.stats { display: flex; gap: 7px; flex-wrap: wrap; margin: 18px 0 18px; }
+.warning { border: 1px solid var(--ink); border-radius: 12px; padding: 12px; margin: 0 0 18px; font-size: 12px; line-height: 1.55; background: #fff7d8; }
+.why { border-top: 1px solid var(--line); padding: 18px 0; }
+.why > strong { font-size: 13px; }
+.why ul { margin: 10px 0 0; padding-left: 18px; }
+.why li { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 5px 0; }
 .days { border-top: 1px solid var(--line); }
 .day { display: grid; grid-template-columns: 42px 1fr; gap: 10px; padding: 18px 0; border-bottom: 1px solid var(--line); }
 .day-number { font-weight: 900; font-size: 13px; }
@@ -69,8 +77,7 @@ input:focus, select:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba
 .day p { margin: 4px 0; font-size: 13px; color: var(--muted); }
 .day .stops { color: var(--ink); }
 .day small { display: block; color: var(--muted); margin-top: 7px; line-height: 1.4; }
-.secondary { margin-top: 18px; background: transparent; color: var(--ink); }
-.secondary:hover { background: var(--accent); }
+.next-note { margin-top: 18px; border: 1px dashed var(--line); border-radius: 10px; padding: 12px; color: var(--muted); font-size: 12px; text-align: center; }
 .footer { border-top: 1px solid var(--line); min-height: 96px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 13px; }
 .footer strong { color: var(--ink); }
 
@@ -93,5 +100,7 @@ input:focus, select:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba
   .two-col { grid-template-columns: 1fr; gap: 0; }
   .section-heading { display: block; }
   .query-summary { text-align: left; }
+  .route-topline { align-items: flex-start; }
+  .route-badges { align-items: flex-end; flex-direction: column; }
   .footer { align-items: flex-start; flex-direction: column; justify-content: center; gap: 8px; }
 }
