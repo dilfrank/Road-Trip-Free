@@ -1,69 +1,184 @@
 # Road Trip Free 1.0
 
-**Road Trip Free** is a route-first road trip planner for travelers who know **when they can go**, but do not want to research dozens of destinations before deciding **where to go**.
+Road Trip Free 是一个 **先理解用户，再选择景点，最后生成路线** 的自驾游规划产品。
 
-> Give it your departure city, month, number of days, daily driving limit and budget. It returns three ranked California road-trip options with an executable day-by-day plan.
+传统旅行产品通常从“你要去哪”开始；Road Trip Free 1.0 改成从“**这次你为什么想出去？你想获得什么感觉？**”开始。
 
-## Why it is different
+> 先理解人，再理解路。
 
-Traditional travel products usually start with a destination or a feed of attractions. Road Trip Free starts with constraints:
+## 产品定位
 
-**time → season → driving tolerance → budget → route**
+面向青年和中年自驾用户，尤其是希望低成本、少做攻略、快速获得可执行自驾方案的人。
 
-The 1.0 recommendation score is transparent:
+Road Trip Free 不做照片墙，不做旅行社区，也不覆盖飞机、火车等其它旅行方式。1.0 只解决一件事：
 
-- Season fit — 35%
-- Daily driving fit — 25%
-- Trip duration fit — 20%
-- Budget fit — 10%
-- Route experience — 10%
+**把用户当下的旅行想法和情绪需求，逐步变成景点选择，再变成可执行的自驾路线。**
 
-## 1.0 features
+## 为什么要改成“想法优先”
 
-- 12 curated California route candidates
-- 2–5 day trip planning
-- South Bay departure presets
-- Top-3 rule-based route ranking
-- Transparent score breakdown and reasons
-- Adaptive day-by-day itinerary
-- Route schematic visualization
-- Seasonal road-risk warnings
-- Copyable trip summary
-- Responsive desktop/mobile UI
-- Pre-departure safety checklist
+用户很多时候并不知道目的地，但知道自己现在的状态：
 
-## Scope / data disclaimer
+- 最近很累，想放空一下；
+- 想去海边吹风，但不想赶路；
+- 想和朋友找个安静的小镇；
+- 想看壮阔自然，但不想高强度徒步；
+- 只有两三天，希望开车不要太累。
 
-1.0 uses curated route data and estimated driving times. It does **not** claim to provide live navigation, live weather, chain controls, wildfire status, or live road closures. The UI explicitly asks users to verify those conditions before departure.
+如果产品一开始就要求用户输入目的地，实际上把最难的选择重新交还给了用户。
 
-## Tech
+Road Trip Free 1.0 因此把流程改成三步。
+
+## 1.0 用户流程
+
+### Step 1：先询问用户想法
+
+首页首先问：
+
+**“这次，你为什么想出去走走？”**
+
+用户可以直接用自然语言表达，例如：
+
+> 最近有点累，想开车去海边吹吹风，不想赶路，最好安静一点。
+
+同时可以选择情绪 / 体验偏好：
+
+- 想放空
+- 想被自然治愈
+- 想看海
+- 想安静一点
+- 想轻松吃喝
+- 想走走但别太累
+- 想看壮阔自然
+- 想和重要的人待在一起
+
+出发地、月份、天数、每天最大驾驶时间和预算仍然保留，但它们是“现实约束”，不是产品对话的起点。
+
+### Step 2：再制定景点
+
+系统先把用户的表达翻译成景点候选，而不是直接生成一条路线。
+
+用户会看到 8 个左右的候选景点，以及每个景点为什么符合当前想法。用户从中选择 2–5 个真正有感觉的地方。
+
+这一步的原则是：
+
+**先问“你愿不愿意去这里”，再问“怎么把它们连起来”。**
+
+### Step 3：最后实现路线
+
+只有用户确认景点以后，系统才开始处理：
+
+- 景点之间是否能组成合理路线；
+- 当前月份是否适合；
+- 单日驾驶是否超过用户上限；
+- 天数是否足够；
+- 预算是否匹配；
+- 哪些停留应该保留，哪些应该删掉。
+
+最后输出 3 条路线方案，并展示每天的驾驶、景点、休息和住宿建议。
+
+## 1.0 推荐逻辑
+
+新版 1.0 把“用户需求和情绪价值”放在最前面，评分总计 100 分：
+
+| 维度 | 权重 |
+| --- | ---: |
+| 用户想法 / 情绪匹配 | 30 |
+| 用户已选择景点 | 25 |
+| 季节适配 | 20 |
+| 驾驶强度 | 10 |
+| 旅行天数 | 10 |
+| 预算匹配 | 5 |
+
+这意味着系统不会为了“路线最顺”而优先牺牲用户真正想去的地方。
+
+## 1.0 已实现功能
+
+- California 自驾 MVP
+- South Bay 出发：San Jose / Santa Clara / Sunnyvale / Cupertino / Mountain View
+- 自然语言旅行想法输入
+- 情绪 / 体验偏好选择
+- 根据想法推荐景点
+- 2–5 个景点确认流程
+- 基于已选景点生成 Top 3 路线
+- 2–5 天路线适配
+- 季节风险提示
+- 驾驶时间与预算约束
+- 路线匹配分解释
+- 路线示意图
+- Day by Day 行程
+- 已选景点高亮
+- 一键复制行程摘要
+- 出发前天气 / 封路 / 防滑链 / 车辆检查提示
+- Desktop / Mobile 响应式 UI
+
+## 当前数据范围与限制
+
+Road Trip Free 1.0 是一个可交互 MVP，不是实时导航产品。
+
+当前：
+
+- 路线和驾驶时间使用项目内置估算数据；
+- 季节规则使用静态产品数据；
+- 不实时读取天气、山火、道路封闭或防滑链信息；
+- 不自动预订酒店、门票或餐厅；
+- 不保证道路在实际出发当天开放。
+
+因此，用户真正出发前仍需要查看 Caltrans、国家公园和天气等官方实时信息。
+
+## 1.0 不做什么
+
+为了保持四周 MVP 的核心范围，暂时不做：
+
+- 景点打卡照片墙
+- 用户发帖和社交社区
+- 酒店 / 机票比价
+- 火车、飞机等非自驾规划
+- 门票交易
+- 通用 AI 聊天入口
+
+## 技术栈
 
 - Next.js 16
 - React 19
 - TypeScript
-- No external map/API key required for the 1.0 demo
+- CSS
+- 规则型推荐引擎
 
-## Run locally
+## 本地运行
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+然后打开：
 
-## Product flow
+```text
+http://localhost:3000
+```
 
-1. Choose departure city, month, days, maximum daily driving and budget.
-2. Generate three ranked routes.
-3. Select a route.
-4. Review the score, route schematic, risks and daily plan.
-5. Copy the plan summary and verify live conditions before departure.
+## 项目核心目录
 
-## Next after 1.0
+```text
+app/
+  page.tsx          # 三阶段用户流程与 UI
+  globals.css       # 视觉与响应式样式
 
-- Real routing / travel time API
-- Live Caltrans / park road-status checks
-- Weather and wildfire risk
-- More California departure regions
-- Save/share trips
+data/
+  routeCandidatesV1.ts # California 路线候选数据
+
+lib/
+  routes.ts         # 数据类型
+  recommend.ts      # 情绪理解、景点推荐与路线评分
+```
+
+## 下一阶段
+
+1. 接入真实路线 / 驾驶时间服务；
+2. 接入实时天气与道路状态；
+3. 扩展 California 以外区域；
+4. 用真实用户测试“想法 → 景点 → 路线”的转化是否比“直接选目的地”更自然。
+
+---
+
+**Road Trip Free 1.0：不是先问你去哪，而是先问你现在需要什么。**
