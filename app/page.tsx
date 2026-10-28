@@ -1,14 +1,15 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import { demoRoutes, RouteSuggestion } from "../lib/routes";
+import { isSupportedOrigin, recommendRoutes } from "../lib/recommend";
+import { BudgetPreference, RouteSuggestion } from "../lib/routes";
 
 type FormState = {
   origin: string;
   month: string;
   days: string;
   maxDrive: string;
-  budget: string;
+  budget: BudgetPreference;
 };
 
 const initialForm: FormState = {
@@ -23,6 +24,7 @@ export default function Home() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [routes, setRoutes] = useState<RouteSuggestion[]>([]);
   const [generated, setGenerated] = useState(false);
+  const [notice, setNotice] = useState("");
 
   const monthLabel = useMemo(() => {
     if (!form.month) return "未选择";
@@ -30,13 +32,35 @@ export default function Home() {
     return `${year} 年 ${Number(month)} 月`;
   }, [form.month]);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setRoutes(demoRoutes);
-    setGenerated(true);
+  function scrollToResults() {
     window.setTimeout(() => {
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
     }, 50);
+  }
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setGenerated(true);
+
+    if (!isSupportedOrigin(form.origin)) {
+      setRoutes([]);
+      setNotice("Step 3 的驾驶时间模型目前先精确支持 San Jose / South Bay。请输入 San Jose、Santa Clara、Sunnyvale、Cupertino 或 Mountain View。");
+      scrollToResults();
+      return;
+    }
+
+    const month = Number(form.month.split("-")[1]);
+    const nextRoutes = recommendRoutes({
+      origin: form.origin.trim(),
+      month,
+      days: Number(form.days),
+      maxDrive: Number(form.maxDrive),
+      budget: form.budget
+    });
+
+    setRoutes(nextRoutes);
+    setNotice("已按季节 35% · 驾驶时间 25% · 旅行天数 20% · 预算 10% · 路线体验 10% 重新排序。当前为规则引擎，不包含实时封路和天气数据。");
+    scrollToResults();
   }
 
   return (
@@ -114,16 +138,21 @@ export default function Home() {
               </label>
               <label>
                 预算偏好
-                <select value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })}>
-                  <option>省钱</option>
-                  <option>普通</option>
-                  <option>舒适</option>
+                <select
+                  value={form.budget}
+                  onChange={(e) => setForm({ ...form, budget: e.target.value as BudgetPreference })}
+                >
+                  <option value="省钱">省钱</option>
+                  <option value="普通">普通</option>
+                  <option value="舒适">舒适</option>
                 </select>
               </label>
             </div>
 
             <button type="submit">生成我的自驾路线 →</button>
-            <p className="microcopy">MVP 阶段先覆盖 California，结果目前使用演示路线数据。</p>
+            <p className="microcopy">
+              Step 3：California 候选路线 + 规则推荐。当前驾驶模型先支持 San Jose / South Bay，实时天气和封路将在后续接入。
+            </p>
           </form>
         </div>
       </section>
@@ -138,7 +167,13 @@ export default function Home() {
         <div className="section-heading">
           <div>
             <span className="eyebrow">STEP 02 · ROUTE OPTIONS</span>
-            <h2>{generated ? `${form.origin} 出发的 3 个建议` : "生成后，这里会出现 3 条路线"}</h2>
+            <h2>
+              {!generated
+                ? "生成后，这里会出现 3 条路线"
+                : routes.length
+                  ? `${form.origin} 出发的 3 个建议`
+                  : "这个出发地还没进入 MVP 驾驶模型"}
+            </h2>
           </div>
           {generated && (
             <p className="query-summary">
@@ -151,38 +186,57 @@ export default function Home() {
           <div className="empty-state">
             <span>路线不是从“热门照片”开始，而是从你的时间和驾驶限制开始。</span>
           </div>
-        ) : (
-          <div className="route-grid">
-            {routes.map((route, index) => (
-              <article className="route-card" key={route.id}>
-                <div className="route-topline">
-                  <span>方案 {String.fromCharCode(65 + index)}</span>
-                  <strong>{route.theme}</strong>
-                </div>
-                <h3>{route.name}</h3>
-                <p className="route-summary">{route.summary}</p>
-                <div className="stats">
-                  <span>{route.totalDrive}</span>
-                  <span>{route.seasonFit}</span>
-                </div>
-
-                <div className="days">
-                  {route.days.map((day) => (
-                    <div className="day" key={day.day}>
-                      <div className="day-number">D{day.day}</div>
-                      <div>
-                        <h4>{day.title}</h4>
-                        <p>{day.drive}</p>
-                        <p className="stops">{day.stops.join(" · ")}</p>
-                        <small>休息：{day.rest}</small>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <button className="secondary" type="button">查看完整路线</button>
-              </article>
-            ))}
+        ) : routes.length === 0 ? (
+          <div className="empty-state">
+            <span>{notice}</span>
           </div>
+        ) : (
+          <>
+            <p className="engine-note">{notice}</p>
+            <div className="route-grid">
+              {routes.map((route, index) => (
+                <article className="route-card" key={route.id}>
+                  <div className="route-topline">
+                    <span>方案 {String.fromCharCode(65 + index)}</span>
+                    <div className="route-badges">
+                      <strong>{route.theme}</strong>
+                      <span className="score">{route.score} 分</span>
+                    </div>
+                  </div>
+                  <h3>{route.name}</h3>
+                  <p className="route-summary">{route.summary}</p>
+                  <div className="stats">
+                    <span>{route.totalDrive}</span>
+                    <span>{route.seasonFit}</span>
+                  </div>
+
+                  {route.warning && <div className="warning">⚠ {route.warning}</div>}
+
+                  <div className="why">
+                    <strong>为什么排在这里</strong>
+                    <ul>
+                      {route.reasons.map((reason) => <li key={reason}>{reason}</li>)}
+                    </ul>
+                  </div>
+
+                  <div className="days">
+                    {route.days.map((day) => (
+                      <div className="day" key={day.day}>
+                        <div className="day-number">D{day.day}</div>
+                        <div>
+                          <h4>{day.title}</h4>
+                          <p>{day.drive}</p>
+                          <p className="stops">{day.stops.join(" · ")}</p>
+                          <small>休息：{day.rest}</small>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="next-note">下一阶段：地图路线 + 实时道路 / 天气校验</div>
+                </article>
+              ))}
+            </div>
+          </>
         )}
       </section>
 
