@@ -1,85 +1,69 @@
-# Road Trip Free
+# Road Trip Free 1.0
 
-Road Trip Free helps budget-conscious road travelers quickly generate season-aware road trip plans with routes, attractions, driving time, and rest stops.
+**Road Trip Free** is a route-first road trip planner for travelers who know **when they can go**, but do not want to research dozens of destinations before deciding **where to go**.
 
-## Product idea
+> Give it your departure city, month, number of days, daily driving limit and budget. It returns three ranked California road-trip options with an executable day-by-day plan.
 
-Instead of asking users to browse destination photos first, Road Trip Free starts with:
+## Why it is different
 
-- departure area
-- travel month
-- number of days
-- maximum driving time per day
-- budget preference
+Traditional travel products usually start with a destination or a feed of attractions. Road Trip Free starts with constraints:
 
-It then recommends several road-trip options that fit those constraints.
+**time → season → driving tolerance → budget → route**
 
-> You do not need to know where to go first. Tell Road Trip Free when you are leaving and how you want to drive.
+The 1.0 recommendation score is transparent:
 
-## Four-week MVP scope
+- Season fit — 35%
+- Daily driving fit — 25%
+- Trip duration fit — 20%
+- Budget fit — 10%
+- Route experience — 10%
 
-### Included
+## 1.0 features
 
-- California-first MVP
-- road-trip-only planning
-- 2–3 recommended route options
-- season-aware ranking
-- daily driving limits
-- attractions / stops
-- rest planning
-- transparent recommendation reasons
+- 12 curated California route candidates
+- 2–5 day trip planning
+- South Bay departure presets
+- Top-3 rule-based route ranking
+- Transparent score breakdown and reasons
+- Adaptive day-by-day itinerary
+- Route schematic visualization
+- Seasonal road-risk warnings
+- Copyable trip summary
+- Responsive desktop/mobile UI
+- Pre-departure safety checklist
 
-### Explicitly excluded for now
+## Scope / data disclaimer
 
-- social posting
-- photo check-in feeds
-- flights or trains
-- hotel / flight booking
-- ticket sales
-- generic travel community features
-
-## Step 3 — Recommendation Engine
-
-The prototype now uses a rule-based recommendation engine instead of returning three fixed demo routes.
-
-Current candidate dataset: **12 California road trips**.
-
-The score is:
-
-- Season fit: 35%
-- Driving fit: 25%
-- Trip-length fit: 20%
-- Budget fit: 10%
-- Route experience: 10%
-
-The UI also explains why each route received its score and shows seasonal caution messages where appropriate.
-
-See [`docs/RECOMMENDATION_ENGINE.md`](docs/RECOMMENDATION_ENGINE.md) for the model and known limitations.
-
-## Current limitation
-
-Driving-time estimates are currently modeled for **San Jose / South Bay departures**. The engine does not yet use live weather, wildfire, road-closure, chain-control, or navigation data.
+1.0 uses curated route data and estimated driving times. It does **not** claim to provide live navigation, live weather, chain controls, wildfire status, or live road closures. The UI explicitly asks users to verify those conditions before departure.
 
 ## Tech
 
 - Next.js 16
 - React 19
 - TypeScript
-- CSS
+- No external map/API key required for the 1.0 demo
 
-## Local development
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Then open `http://localhost:3000`.
+Open `http://localhost:3000`.
 
-## Roadmap
+## Product flow
 
-- [x] Step 1 — narrow the product scope
-- [x] Step 2 — build the first planner UI
-- [x] Step 3 — add a rule-based recommendation engine
-- [ ] Step 4 — map + real route / road-condition validation
-- [ ] Step 5 — deploy and test with real users
+1. Choose departure city, month, days, maximum daily driving and budget.
+2. Generate three ranked routes.
+3. Select a route.
+4. Review the score, route schematic, risks and daily plan.
+5. Copy the plan summary and verify live conditions before departure.
+
+## Next after 1.0
+
+- Real routing / travel time API
+- Live Caltrans / park road-status checks
+- Weather and wildfire risk
+- More California departure regions
+- Save/share trips
