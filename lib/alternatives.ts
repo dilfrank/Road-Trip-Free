@@ -45,4 +45,3 @@ export async function createAlternatives(trip:TripInput):Promise<Comparison>{
     /^(江苏|四川)(省)?$/.test(trip.origin.trim())?'出发地目前仅到省级，需具体城市或地址后才能核对往返车程。':'参考地址仍需核对到具体出发点与入口。'
   ]};
 }
-

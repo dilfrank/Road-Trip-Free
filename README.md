@@ -1,3 +1,12 @@
+# 自驾自由 2.0
+
+一次填写想法与出行条件，直接对比三套度假草案。
+
+- [演示说明](docs/DEMO.md) · [网页演示文件](public/demo/index.html) · [MP4 截图演示](public/demo/walkthrough.mp4)
+- 本机运行后访问 `/demo/index.html` 播放。当前属于 2.0 功能预览，模型、地图和动态事实核验状态见 [接入说明](docs/INTEGRATION.md)。
+
+![三套方案对比](public/demo/03-comparison.jpg)
+
 # Road Trip Free 2.0 Alpha.3
 
 最新状态：服务端已串联 Intent、Places、Planner、Validator、Explainer，新增 OpenAI 结构化需求和高德参考车程适配器。当前未配置密钥，真实调用尚未验收；入口、动态开放及完整可行性仍待核实。以 [接入说明与模块边界](docs/INTEGRATION.md) 为准。以下 alpha.2 及更早内容保留为历史记录。
