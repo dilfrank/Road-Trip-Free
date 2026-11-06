@@ -1,0 +1,11 @@
+file '01-intent.jpg'
+duration 4
+file '02-plan.jpg'
+duration 4
+file '03-comparison.jpg'
+duration 4
+file '05-comparison-right.jpg'
+duration 4
+file '04-validation.jpg'
+duration 4
+file '04-validation.jpg'
