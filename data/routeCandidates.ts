@@ -1,6 +1,24 @@
-import { RouteCandidate } from "../lib/routes";
+// Historical leg-based dataset; the active engine uses routeCandidatesV1.ts.
+type LegacyRouteCandidate = {
+  id: string;
+  name: string;
+  theme: string;
+  summary: string;
+  totalDriveHours: number;
+  bestMonths: number[];
+  goodMonths: number[];
+  cautionMonths?: number[];
+  cautionText?: string;
+  minDays: number;
+  maxDays: number;
+  costTier: number;
+  experienceScore: number;
+  slowDayLocation: string;
+  slowDayStops: string[];
+  legs: { to: string; hours: number; stops: string[]; rest: string }[];
+};
 
-export const routeCandidates: RouteCandidate[] = [
+export const routeCandidates: LegacyRouteCandidate[] = [
   {
     id: "central-coast",
     name: "Monterey · Big Sur · SLO",
