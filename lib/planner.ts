@@ -52,11 +52,11 @@ export function exportPlan(t: TripInput, plan: Plan, places: Place[]): string {
   return ['自驾自由 · 待核实草案', plan.summary, `出发：${t.date}`, `想法：${t.thought || '未填写'}`, `偏好：${t.preferences.join('、') || '未填写'}`, `总预算（人民币，整团）：${t.budget || '未填写'}`, ...plan.days.map(d => `第${d.day}天：${d.stops.join(' → ')}\n${d.note}`), '待核实：', ...plan.issues.map(i => `- ${i}`), '资料线索（非当前运营事实）：', ...places.map(p => `${p.name}：${p.evidence.sourceId}《${p.evidence.title}》物理页${p.evidence.page}`)].join('\n');
 }
 
-export function restoreTrip(value: unknown): TripInput | null {
+export function restoreTrip(value: unknown, requirePlan = true): TripInput | null {
   if (!value || typeof value !== 'object') return null;
   const t = value as TripInput;
   if (['thought','origin','end','date','budget','needs'].some(k => typeof t[k as keyof TripInput] !== 'string')) return null;
   if (!Array.isArray(t.preferences) || t.preferences.some(p => !['休息','自然','文化','挑战'].includes(p))) return null;
-  if (typeof t.days !== 'number' || typeof t.maxDrive !== 'number' || validateTrip(t).length) return null;
+  if (typeof t.days !== 'number' || typeof t.maxDrive !== 'number' || (requirePlan && validateTrip(t).length)) return null;
   return { thought: t.thought, origin: t.origin, end: t.end, date: t.date, days: t.days, maxDrive: t.maxDrive, budget: t.budget, needs: t.needs, preferences: [...new Set(t.preferences)] };
 }

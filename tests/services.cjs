@@ -4,6 +4,9 @@ const assert=require('node:assert/strict');
 const ts=require('typescript');
 const cache=new Map();
 function load(file){file=path.resolve(file);if(cache.has(file))return cache.get(file).exports;const mod={exports:{}};cache.set(file,mod);const js=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;new Function('require','module','exports',js)(name=>name.startsWith('.')?load(path.resolve(path.dirname(file),name+'.ts')):require(name),mod,mod.exports);return mod.exports;}
+const {searchPages}=load('lib/corpus.ts');
+const corpus={indexedAt:'2026-11-07',documents:[{id:'TEST',title:'测试指南',path:'fixture.pdf',pages:[{page:2,text:'竹林 停车 休息',method:'ocr'},{page:3,text:'只有竹林',method:'text'}]}]};
+assert.equal(searchPages(corpus,'竹林 停车').length,1);assert.equal(searchPages(corpus,'竹林 停车')[0].page,2);assert.equal(searchPages(corpus,'')[0],undefined);assert.equal(searchPages(corpus,'不存在').length,0);
 const s=load('lib/services.ts');const {emptyTrip}=load('lib/planner.ts');
 const t={...emptyTrip,origin:'成都东站',date:'2026-12-01',days:2,maxDrive:4,thought:'期待自然，也担心太累'};
 const observation={value:'希望接触自然',evidence:'期待自然',category:'experience',source:'system_inferred',stage:'anticipated',valence:'positive'};
@@ -11,6 +14,9 @@ const fake=data=>new Response(JSON.stringify(data),{status:200});
 (async()=>{
 delete process.env.OPENAI_API_KEY;delete process.env.OPENAI_MODEL;delete process.env.AMAP_WEB_KEY;
 assert.equal((await s.executeIntent(t)).mode,'explicit_only');
+const categorized=await s.executeIntent({...t,thought:'现在的感受：期待又担心\n期待的体验：不想爬山\n过去的回忆：上次散步很好\n对当地的心意：不打扰居民'});
+assert.equal(categorized.observations.length,4);assert.equal(categorized.observations[1].value,'不想爬山');assert.equal(categorized.observations[2].stage,'recalled');assert.equal(categorized.observations[3].category,'community');
+assert.equal((await s.executeIntent({...t,thought:'在意与顾虑：'})).observations.length,0);
 assert.throws(()=>s.validateObservations([{...observation,evidence:'喜欢爬山'}],t));
 assert.throws(()=>s.validateObservations([{...observation,stage:'invented'}],t));
 process.env.OPENAI_API_KEY='test-fixture';process.env.OPENAI_MODEL='test-fixture';

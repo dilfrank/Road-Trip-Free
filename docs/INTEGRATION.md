@@ -40,3 +40,13 @@ ALLOW_PUBLIC_TRIP_API=false
 `npm run build` 检查 Next.js 生产构建与 TypeScript。密钥配置后的验收还需要：真实原话解析、具体地址往返、超限场景、供应商配额/失败，以及实际入口匹配。
 
 接口依据：[OpenAI Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses)、[高德驾车路径规划](https://lbs.amap.com/api/webservice/guide/api/direction)、[高德地理编码](https://lbs.amap.com/api/webservice/guide/api/georegeo)。
+
+## 本地资料与输入区更新
+
+已接入 `E:\自驾资料` 对应的本地全文检索：189 份文件、2168 页。`npm run index:corpus` 使用既有提取结果 `../research/corpus/Sxxx.json`，逐文件校验 E 盘原件 SHA256 后生成 `.local/corpus-index.json`。原件缺失或哈希变化的记录会跳过并报告，需要重新提取/OCR 后再运行索引；此脚本不负责新文件的文字提取。原文件、全文索引均不上传 GitHub。
+
+`GET /api/corpus?q=关键词` 仅供本机查询，返回最多 8 个匹配页面、来源编号与片段，不将攻略内容送给模型。输入多个空格分隔词时采用 AND 匹配。界面在选择地点区域展示本地资料搜索结果。全文可搜索不等于所有地点都已成为可规划候选；当前可选候选仍为已整理的五处。旧攻略与 OCR 文本只作为待核实线索。
+
+输入区删除圆圈箭头，将“填写出行条件”与“整理我的想法”分离至大框外。先整理需求，不再强制填写日期、出发地；确认并选地点时才检查出行条件。修改条件保留已整理的表达，修改想法则重新整理。
+
+新增七种可选表达主题：现在的感受、期待的体验、在意与顾虑、同行与关系、这次的意义、过去的回忆、对当地的心意。选择主题仅插入标题，不替用户写内容。无模型时按显式标题归类，保留否定与矛盾，不按关键词猜测情绪；自由文本保留为未归类原话。已配置模型时使用一致分类并展示推断待确认。主题不是必答问卷，也不代表完整心理测量。

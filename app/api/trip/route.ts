@@ -15,7 +15,7 @@ export async function POST(req:Request){
     const reader=req.body?.getReader();if(!reader)return NextResponse.json({error:'缺少请求内容。'},{status:400});
     let text='',bytes=0;const decoder=new TextDecoder();while(true){const part=await reader.read();if(part.done)break;bytes+=part.value.byteLength;if(bytes>16000){await reader.cancel();return NextResponse.json({error:'输入过长。'},{status:413});}text+=decoder.decode(part.value,{stream:true});}text+=decoder.decode();
     let body;try{body=JSON.parse(text);}catch{return NextResponse.json({error:'请求格式无效。'},{status:400});}
-    const trip=restoreTrip(body.trip);
+    const trip=restoreTrip(body.trip,body.action!=='intent');
     if(!trip||trip.thought.length>2000||trip.needs.length>1000||trip.origin.length>100||trip.end.length>100)return NextResponse.json({error:'请检查出行条件。'},{status:400});
     if(body.action==='intent')return NextResponse.json({intent:await executeIntent(trip)});
     if(body.action==='places'&&body.confirmed===true)return NextResponse.json({places:selectPlaces(trip)});
