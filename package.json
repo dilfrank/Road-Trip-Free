@@ -1,9 +1,9 @@
 {
   "name": "road-trip-free",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.3",
   "private": true,
   "scripts": {
-    "test": "node tests/recommend.cjs",
+    "test": "node tests/recommend.cjs && node tests/planner.cjs && node tests/services.cjs",
     "typecheck": "tsc --noEmit",
     "dev": "next dev",
     "build": "next build",

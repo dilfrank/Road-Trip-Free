@@ -6,3 +6,6 @@ out
 .env.local
 *.log
 *.tsbuildinfo
+
+.env.*
+!.env.example

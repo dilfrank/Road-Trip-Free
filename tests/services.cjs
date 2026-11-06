@@ -1,0 +1,32 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const assert=require('node:assert/strict');
+const ts=require('typescript');
+const cache=new Map();
+function load(file){file=path.resolve(file);if(cache.has(file))return cache.get(file).exports;const mod={exports:{}};cache.set(file,mod);const js=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;new Function('require','module','exports',js)(name=>name.startsWith('.')?load(path.resolve(path.dirname(file),name+'.ts')):require(name),mod,mod.exports);return mod.exports;}
+const s=load('lib/services.ts');const {emptyTrip}=load('lib/planner.ts');
+const t={...emptyTrip,origin:'成都东站',date:'2026-12-01',days:2,maxDrive:4,thought:'期待自然，也担心太累'};
+const observation={value:'希望接触自然',evidence:'期待自然',category:'experience',source:'system_inferred',stage:'anticipated',valence:'positive'};
+const fake=data=>new Response(JSON.stringify(data),{status:200});
+(async()=>{
+delete process.env.OPENAI_API_KEY;delete process.env.OPENAI_MODEL;delete process.env.AMAP_WEB_KEY;
+assert.equal((await s.executeIntent(t)).mode,'explicit_only');
+assert.throws(()=>s.validateObservations([{...observation,evidence:'喜欢爬山'}],t));
+assert.throws(()=>s.validateObservations([{...observation,stage:'invented'}],t));
+process.env.OPENAI_API_KEY='test-fixture';process.env.OPENAI_MODEL='test-fixture';
+const intent=await s.executeIntent(t,async(url,init)=>{const body=JSON.parse(init.body);assert.equal(body.store,false);assert.equal(body.text.format.strict,true);return fake({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({observations:[observation],unknowns:[],question:''})}]}]});});
+assert.equal(intent.confirmed,false);assert.equal(intent.observations[0].evidence,'期待自然');
+await assert.rejects(s.executeIntent(t,async()=>fake({status:'incomplete'})));
+const offline=await s.executePlanner(t,['bamboo']);assert.equal(offline.checks.driving,'unknown');assert.equal(offline.status,'provisional');
+process.env.AMAP_WEB_KEY='test-fixture';let calls=0;
+const map=async url=>{calls++;return fake(url.includes('geocode')?{status:'1',geocodes:[{location: url.includes(encodeURIComponent('成都'))?'104.1,30.6':'105.0,28.5'}]}:{status:'1',route:{paths:[{duration:'18000',distance:'300000'}]}});};
+const plan=await s.executePlanner(t,['bamboo'],map);
+assert.equal(plan.legs.length,2);assert.equal(calls,4);assert.equal(plan.checks.returnIncluded,true);assert.equal(plan.checks.coverage,true);assert.equal(plan.checks.driving,'fail');assert.equal(plan.status,'infeasible');
+assert.equal(plan.legs[1].to,t.origin);assert.ok(plan.explanation.some(x=>x.includes('超出')));
+const invalid=await s.executePlanner(t,['missing'],map);assert.equal(invalid.status,'needs_input');
+const ambiguous=await s.executePlanner(t,['bamboo'],async()=>fake({status:'1',geocodes:[{},{}]}));assert.equal(ambiguous.checks.driving,'unknown');assert.ok(ambiguous.issues.some(x=>x.includes('不唯一')));
+const stale=s.validatePlan(t,['bamboo'],plan,plan.legs.map(l=>({...l,fetchedAt:'2000-01-01'})),2);assert.equal(stale.checks.freshness,'unknown');
+const bad=await s.executePlanner(t,['bamboo'],async url=>fake(url.includes('geocode')?{status:'1',geocodes:[{location:'104.1,30.6'}]}:{status:'1',route:{paths:[{duration:'NaN',distance:'1'}]}}));assert.equal(bad.legs.length,0);
+delete process.env.OPENAI_API_KEY;delete process.env.OPENAI_MODEL;delete process.env.AMAP_WEB_KEY;
+console.log('Services: evidence, provider contracts, missing config, ambiguity, return, limits and freshness passed (fixtures, not live calls).');
+})().catch(e=>{console.error(e);process.exitCode=1;});

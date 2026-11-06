@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1000" viewBox="0 0 1440 1000">
+<defs><linearGradient id="accent"><stop stop-color="#ffad6d"/><stop offset="1" stop-color="#f47762"/></linearGradient><linearGradient id="panel" x2="1" y2=".6"><stop stop-color="#ffe7ce"/><stop offset="1" stop-color="#f8beb8"/></linearGradient></defs>
+<rect width="1440" height="1000" fill="#fdfcfb"/>
+<text x="64" y="62" fill="#202020" font-size="22" font-weight="600" font-family="Noto Sans SC,Microsoft YaHei,sans-serif">自驾自由</text>
+<text x="360" y="294" fill="#202020" font-size="48" font-weight="400" font-family="Noto Sans SC,Microsoft YaHei,sans-serif">度假者的 随心选择</text>
+<rect x="360" y="354" width="720" height="248" rx="28" fill="white" stroke="#e7e4e0"/>
+<text x="390" y="410" fill="#77736f" font-size="22" font-weight="400" font-family="Noto Sans SC,Microsoft YaHei,sans-serif">这次，想怎样度假？</text>
+<rect x="384" y="532" width="116" height="48" rx="24" fill="url(#accent)" stroke="none"/>
+<text x="406" y="563" fill="#202020" font-size="18" font-weight="400" font-family="Noto Sans SC,Microsoft YaHei,sans-serif">计划</text>
+<text x="464" y="563" fill="#202020" font-size="22" font-weight="400" font-family="Noto Sans SC,Microsoft YaHei,sans-serif">+</text>
+<circle cx="1032" cy="556" r="24" fill="#252525"/><path d="M1032 565v-18m-6 6 6-6 6 6" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

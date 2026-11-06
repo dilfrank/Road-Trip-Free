@@ -1,4 +1,8 @@
-# Road Trip Free 2.0 Alpha
+# Road Trip Free 2.0 Alpha.3
+
+最新状态：服务端已串联 Intent、Places、Planner、Validator、Explainer，新增 OpenAI 结构化需求和高德参考车程适配器。当前未配置密钥，真实调用尚未验收；入口、动态开放及完整可行性仍待核实。以 [接入说明与模块边界](docs/INTEGRATION.md) 为准。以下 alpha.2 及更早内容保留为历史记录。
+
+2026-11-07 首批代码已落地：新版首页串联需求确认、资料候选、主动选择、草案检查与保存调整五个模块。当前开放四川 5 个资料候选，所有行程仍是待核实占位草案；尚无模型理解或实时路线。原 California 页面在 `/legacy`。详见 [五模块实现与验证状态](docs/V2_IMPLEMENTATION.md)，该记录优先于下方较早的状态描述。
 
 当前工作分支在 1.0 基础上迭代。2.0 的产品目标是帮助用户获得适合自己的自驾体验，并考虑旅行成本、日常生活与当地社区。
 
@@ -6,11 +10,15 @@
 - [产品与模块计划](docs/V2_PLAN.md)
 - [新版 Prompt：旅游幸福与情绪理解](docs/V2_PROMPTS.md)
 - [Emotionapps：来源、比较、应用边界与意图数据契约](docs/EMOTIONAPPS_FRAMEWORK.md)
+- [中国自驾 Prompt：资料、体验与完整行程](docs/CHINA_TRAVEL_PROMPT.md)
+- [中国资料审阅报告](docs/CHINA_SOURCE_REVIEW.md) · [逐文件索引与读取状态](docs/CHINA_CORPUS_INDEX.md)
 - [Figma 首页设计：桌面与手机](https://www.figma.com/design/VXZjuy80aMKodyRPCHdYO0?node-id=3-179)
 
 2026-11-06：Emotionapps 借鉴已写入项目规范，尚未接入运行时。当前仍是关键词与静态模板推荐，不具备无意识情绪识别、幸福预测或实时道路计算。Figma 渐变设计尚未完整同步网页。旧版数据类型问题已修复；TypeScript 检查、30 个路线用例和生产构建通过，浏览器视觉与交互验收尚未完成。
 
 开发验证：使用 Node.js 24（领域测试使用内置 TypeScript 转换），安装依赖后运行 `npm test`、`npm run build`。`npm run typecheck` 用于类型检查；首次检出应先运行构建生成 Next.js 类型。
+
+中国资料修订（2026-11-07）：新增资料证据与时效规则、多种交通方式、同行需求、全天负担和完整往返逻辑，完善 Emotionapps 与 Prompt。此轮为文档与研究索引更新；运行时仍未接入中国资料、模型或实时路线，以上已有测试结果不等于中国功能通过验收。原始 PDF、图片及全文提取保留本地。
 
 以下保留 1.0 历史说明；其中流程文案、功能描述和效果表述不作为 2.0 已完成状态的依据。2.0 以以上规范及实际代码为准。
 
