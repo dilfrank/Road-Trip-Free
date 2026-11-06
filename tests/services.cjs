@@ -14,6 +14,13 @@ const fake=data=>new Response(JSON.stringify(data),{status:200});
 (async()=>{
 delete process.env.OPENAI_API_KEY;delete process.env.OPENAI_MODEL;delete process.env.AMAP_WEB_KEY;
 assert.equal((await s.executeIntent(t)).mode,'explicit_only');
+const {createAlternatives}=load('lib/alternatives.ts');
+const comparison=await createAlternatives({...t,thought:'在意与顾虑：不想赶路',budget:'3000'});
+const jiangsu=await createAlternatives({...t,origin:'江苏'});assert.deepEqual(jiangsu.alternatives.map(a=>a.id),['nanjing','suzhou','yangzhou']);
+assert.equal(comparison.alternatives.length,3);assert.equal(new Set(comparison.alternatives.map(a=>a.id)).size,3);assert.equal(comparison.intent.confirmed,false);
+for(const option of comparison.alternatives){assert.equal(option.plan.status,'provisional');assert.ok(option.cells.concerns.includes('不想赶路'));assert.ok(option.cells.budget.includes('3000'));assert.ok(option.cells.driving.includes('待核实'));assert.ok(option.cells.route.includes(t.origin));}
+await assert.rejects(createAlternatives({...t,days:0}));
+await assert.rejects(createAlternatives({...t,thought:''}));
 const categorized=await s.executeIntent({...t,thought:'现在的感受：期待又担心\n期待的体验：不想爬山\n过去的回忆：上次散步很好\n对当地的心意：不打扰居民'});
 assert.equal(categorized.observations.length,4);assert.equal(categorized.observations[1].value,'不想爬山');assert.equal(categorized.observations[2].stage,'recalled');assert.equal(categorized.observations[3].category,'community');
 assert.equal((await s.executeIntent({...t,thought:'在意与顾虑：'})).observations.length,0);

@@ -1,0 +1,5 @@
+import type { Comparison } from '../lib/alternatives';
+import { comparisonRows as rows } from '../lib/comparisonRows';
+export function ComparisonTable({comparison}:{comparison:Comparison}){
+ return <section className="v2-comparison" aria-label="三套出行方案对比"><h2>三种度假选择</h2><p>{comparison.basis}</p><p>{comparison.limitations[0]}</p><div className="v2-table-scroll" role="region" aria-label="方案对比表，可横向滚动" tabIndex={0}><table><caption>按体验、关系、意义与现实条件比较</caption><thead><tr><th scope="col">对比条件</th>{comparison.alternatives.map(a=><th scope="col" key={a.id}>{a.title}<span>{a.destination}</span></th>)}</tr></thead><tbody>{rows.map(([key,label])=><tr key={key}><th scope="row">{label}</th>{comparison.alternatives.map(a=><td key={a.id}>{a.cells[key]}</td>)}</tr>)}</tbody></table></div><details><summary>原话与方案依据</summary><p className="v2-original">{comparison.intent.original}</p>{comparison.intent.observations.filter(o=>o.source==='system_inferred').map((o,i)=><p key={i}>待确认的理解：{o.value}（依据：{o.evidence}）</p>)}{comparison.limitations.slice(1).map(s=><p key={s}>{s}</p>)}</details></section>;
+}

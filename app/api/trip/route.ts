@@ -1,3 +1,4 @@
+import { createAlternatives } from '../../../lib/alternatives';
 import { NextResponse } from 'next/server';
 import { restoreTrip } from '../../../lib/planner';
 import { executeIntent, executePlanner, integrationStatus, selectPlaces } from '../../../lib/services';
@@ -17,6 +18,8 @@ export async function POST(req:Request){
     let body;try{body=JSON.parse(text);}catch{return NextResponse.json({error:'请求格式无效。'},{status:400});}
     const trip=restoreTrip(body.trip,body.action!=='intent');
     if(!trip||trip.thought.length>2000||trip.needs.length>1000||trip.origin.length>100||trip.end.length>100)return NextResponse.json({error:'请检查出行条件。'},{status:400});
+    if(body.action==='compare'&&!trip.thought.trim())return NextResponse.json({error:'请填写度假想法。'},{status:400});
+    if(body.action==='compare')return NextResponse.json({comparison:await createAlternatives(trip)});
     if(body.action==='intent')return NextResponse.json({intent:await executeIntent(trip)});
     if(body.action==='places'&&body.confirmed===true)return NextResponse.json({places:selectPlaces(trip)});
     if(body.action==='plan'&&body.confirmed===true&&Array.isArray(body.selected)&&body.selected.length<=5&&body.selected.every((id:unknown)=>typeof id==='string'&&id.length<100))return NextResponse.json({plan:await executePlanner(trip,[...new Set<string>(body.selected)])});
