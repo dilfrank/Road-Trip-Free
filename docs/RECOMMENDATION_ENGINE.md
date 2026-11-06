@@ -1,5 +1,7 @@
 # Road Trip Free — Recommendation Engine v0.1
 
+> Historical specification, not the current 2.0 contract. Current code uses intent 30, attraction coverage 25, season 20, driving 10, duration 10, and budget 5. These are route-match weights, not happiness or emotion measurements. See [2.0 prompts](V2_PROMPTS.md) and [Emotionapps application boundaries](EMOTIONAPPS_FRAMEWORK.md). Emotionapps-inspired interpretation is not integrated into the runtime.
+
 This document describes the first rule-based recommendation engine used by the four-week MVP.
 
 ## Goal
