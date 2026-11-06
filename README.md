@@ -1,4 +1,20 @@
-# Road Trip Free 1.0
+# Road Trip Free 2.0 Alpha
+
+当前工作分支在 1.0 基础上迭代。2.0 的产品目标是帮助用户获得适合自己的自驾体验，并考虑旅行成本、日常生活与当地社区。
+
+## 2.0 项目规范入口
+- [产品与模块计划](docs/V2_PLAN.md)
+- [新版 Prompt：旅游幸福与情绪理解](docs/V2_PROMPTS.md)
+- [Emotionapps：来源、比较、应用边界与意图数据契约](docs/EMOTIONAPPS_FRAMEWORK.md)
+- [Figma 首页设计：桌面与手机](https://www.figma.com/design/VXZjuy80aMKodyRPCHdYO0?node-id=3-179)
+
+2026-11-06：Emotionapps 借鉴已写入项目规范，尚未接入运行时。当前仍是关键词与静态模板推荐，不具备无意识情绪识别、幸福预测或实时道路计算。Figma 渐变设计尚未完整同步网页。旧版数据类型问题已修复；TypeScript 检查、30 个路线用例和生产构建通过，浏览器视觉与交互验收尚未完成。
+
+开发验证：使用 Node.js 24（领域测试使用内置 TypeScript 转换），安装依赖后运行 `npm test`、`npm run build`。`npm run typecheck` 用于类型检查；首次检出应先运行构建生成 Next.js 类型。
+
+以下保留 1.0 历史说明；其中流程文案、功能描述和效果表述不作为 2.0 已完成状态的依据。2.0 以以上规范及实际代码为准。
+
+## 1.0 历史说明
 
 Road Trip Free 是一个 **先理解用户，再选择景点，最后生成路线** 的自驾游规划产品。
 
