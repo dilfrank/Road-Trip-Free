@@ -202,6 +202,7 @@ export function suggestAttractions(prefs: Omit<TripPreferences, "selectedAttract
 
 function adaptDays(route: RouteCandidate, targetDays: number): RouteDay[] {
   const source = route.itinerary;
+  // 无道路数据时不压缩原行程，候选入口会过滤天数不足的路线。
   if (targetDays === source.length) return source;
   if (targetDays < source.length) {
     if (targetDays === 2) {
@@ -261,9 +262,13 @@ export function recommendRoutes(prefs: TripPreferences): RouteSuggestion[] {
   const moods = inferMoods(prefs.thought, prefs.moods);
 
   return routeCandidates
+    .filter((route) => route.itinerary.length <= prefs.days)
     .map((route) => {
+      const days = adaptDays(route, prefs.days);
+      const actualStops = new Set(days.flatMap((day) => day.stops));
+      const covered = prefs.selectedAttractions.filter((name) => actualStops.has(name));
       const intent = intentScore(route, moods);
-      const attraction = attractionScore(route, prefs.selectedAttractions);
+      const attraction = prefs.selectedAttractions.length ? Math.round(25 * covered.length / prefs.selectedAttractions.length) : 0;
       const season = seasonScore(route, prefs.month);
       const driving = drivingScore(route, prefs.maxDrive);
       const duration = durationScore(route, prefs.days);
@@ -277,7 +282,7 @@ export function recommendRoutes(prefs: TripPreferences): RouteSuggestion[] {
         ...route,
         score,
         breakdown: { intent, attraction, season, driving, duration, budget },
-        reasons: buildReasons(route, prefs, moods, { intent, attraction, season, driving, duration }),
+        reasons: buildReasons(route, { ...prefs, selectedAttractions: covered }, moods, { intent, attraction, season, driving, duration }),
         seasonFit: route.riskMonths?.includes(prefs.month)
           ? "季节风险较高"
           : season === 20
@@ -285,11 +290,11 @@ export function recommendRoutes(prefs: TripPreferences): RouteSuggestion[] {
             : season >= 15
               ? "当季适合"
               : "可行但非最佳",
-        totalDrive: `总驾驶约 ${route.totalDriveHours}h`,
-        days: adaptDays(route, prefs.days),
+        totalDrive: `总驾驶约 ${days.reduce((sum, day) => sum + day.driveHours, 0).toFixed(1)}h`,
+        days,
         emotionalValue: emotionalValue(route),
         matchedMoods,
-        matchedAttractions
+        matchedAttractions: covered
       };
     })
     .sort((a, b) => b.score - a.score)
