@@ -5,7 +5,7 @@ import type { Intent, Plan, TripInput } from './planner';
 
 export type Observation = { value: string; evidence: string; category: 'feeling' | 'experience' | 'concern' | 'relationship' | 'meaning' | 'memory' | 'community'; source: 'user_explicit' | 'system_inferred'; stage: 'current' | 'anticipated' | 'recalled' | 'unknown'; valence: 'positive' | 'negative' | 'mixed' | 'neutral' | 'unknown' };
 export type ParsedIntent = Intent & { observations: Observation[]; mode: 'model' | 'explicit_only' };
-export type Leg = { day: number; from: string; to: string; seconds: number; meters: number; fetchedAt: string; provider: 'amap'; endpointScope: 'geocoded_reference' };
+export type Leg = { day: number; from: string; to: string; seconds: number; meters: number; fetchedAt: string; provider: 'amap'; endpointScope: 'geocoded_reference'; geometry?: [number,number][] };
 export type CheckedPlan = Plan & { legs: Leg[]; checks: { coverage: boolean; returnIncluded: boolean; driving: 'pass' | 'fail' | 'unknown'; freshness: 'pass' | 'unknown' }; explanation: string[] };
 type Fetcher = typeof fetch;
 export function integrationStatus() { return { intent: process.env.OPENAI_API_KEY && process.env.OPENAI_MODEL ? 'configured' : 'not_configured', maps: process.env.AMAP_WEB_KEY ? 'configured' : 'not_configured' }; }
@@ -91,7 +91,8 @@ export async function executePlanner(t:TripInput,ids:string[],request:Fetcher=fe
       const data=await amap('direction/driving',{origin:coords.get(pair.from)!,destination:coords.get(pair.to)!,extensions:'base',strategy:'0'},request);
       const path=data.route?.paths?.[0];const seconds=Number(path?.duration),meters=Number(path?.distance);
       if(!Number.isFinite(seconds)||seconds<=0||!Number.isFinite(meters)||meters<=0)throw new Error('地图没有返回有效车程。');
-      legs.push({...pair,seconds,meters,fetchedAt:new Date().toISOString(),provider:'amap',endpointScope:'geocoded_reference'});
+      const geometry:[number,number][]=(path.steps??[]).flatMap((step:{polyline?:string})=>(step.polyline??'').split(';').filter(Boolean).map((point:string)=>point.split(',').map(Number))).filter((p:number[])=>p.length===2&&p.every(Number.isFinite)&&Math.abs(p[0])<=180&&Math.abs(p[1])<=90);
+      legs.push({...pair,seconds,meters,geometry,fetchedAt:new Date().toISOString(),provider:'amap',endpointScope:'geocoded_reference'});
     }} catch(error){base.issues.push(error instanceof Error && !error.message.includes('http')?error.message:'地图查询失败，请稍后重试。');}
   }else if(base.days.length)base.issues.push('地图尚未配置，未计算实际车程。');
   if(legs.length===pairs.length && pairs.length){base.issues=base.issues.filter(i=>!['逐段驾驶时间与每日上限尚未核对','末日返程衔接尚未核对'].includes(i));}
